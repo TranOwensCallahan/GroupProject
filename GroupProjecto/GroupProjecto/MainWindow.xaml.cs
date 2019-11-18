@@ -27,7 +27,7 @@ namespace GroupProjecto
             InitializeComponent();
         }
 
-        private void CreateBtn_Click(object sender, RoutedEventArgs e)
+        private void topicBtn(object sender, RoutedEventArgs e)
         {
             Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
 
