@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="createBtn" Content="Generate your schedule" HorizontalAlignment="Left" Margin="533,273,0,0" VerticalAlignment="Top" Width="138" Height="47" Click="CreateBtn_Click"/>
-        <TextBox x:Name="SelectFileBtn" HorizontalAlignment="Left" Height="52" Margin="29,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="174"/>
+        <Button x:Name="topicBtn" Content="Input your topics" HorizontalAlignment="Left" Margin="533,273,0,0" VerticalAlignment="Top" Width="138" Height="47" Click="topicBtn"/>
 
     </Grid>
 </Window>
