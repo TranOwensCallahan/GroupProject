@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.IO;
 
 namespace GroupProjecto
 {
@@ -47,7 +48,7 @@ namespace GroupProjecto
 
             xlWorkSheet.Cells[1, 1] = "Topic";
             xlWorkSheet.Cells[1, 2] = "Days";
-          
+
 
 
 
@@ -62,6 +63,22 @@ namespace GroupProjecto
             MessageBox.Show("Excel file created , you can find the file d:\\csharp-Excel.xls");
         }
 
+        private void SelectFileBtn1_Click(object sender, RoutedEventArgs e)
+        {
+            //selecting a file these lines of code was given to me 
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            var result = dlg.ShowDialog();
+            // puts file name in the text box
+            SelectFileTB.Text = dlg.FileName;
+        }
+
+        private void ReadFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(SelectFileTB.Text) == true)
+            {// if file exists read all the lines
+                var lines = File.ReadAllLines(SelectFileTB.Text);
+            }
+        }
     }
 }
 
