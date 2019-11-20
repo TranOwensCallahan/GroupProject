@@ -28,7 +28,7 @@ namespace GroupProjecto
             InitializeComponent();
         }
 
-        private void topicBtn(object sender, RoutedEventArgs e)
+        private void TopicBtn(object sender, RoutedEventArgs e)
         {
             Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
 
@@ -52,7 +52,7 @@ namespace GroupProjecto
 
 
 
-            xlWorkBook.SaveAs("d:\\csharp-Excel.xls", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs("d:\\csharp-Excel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             xlApp.Quit();
 
@@ -60,7 +60,7 @@ namespace GroupProjecto
             Marshal.ReleaseComObject(xlWorkBook);
             Marshal.ReleaseComObject(xlApp);
 
-            MessageBox.Show("Excel file created , you can find the file d:\\csharp-Excel.xls");
+            MessageBox.Show("Excel file created , you can find the file d:\\csharp-Excel.csv");
         }
 
         private void SelectFileBtn1_Click(object sender, RoutedEventArgs e)
@@ -77,6 +77,7 @@ namespace GroupProjecto
             if (File.Exists(SelectFileTB.Text) == true)
             {// if file exists read all the lines
                 var lines = File.ReadAllLines(SelectFileTB.Text);
+        
             }
         }
     }
