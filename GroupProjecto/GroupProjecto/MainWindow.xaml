@@ -7,10 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="topicBtn" Content="Input your topics" HorizontalAlignment="Left" Margin="533,273,0,0" VerticalAlignment="Top" Width="138" Height="47" Click="TopicBtn"/>
+        <Button x:Name="topicBtn" Content="Input your topics" HorizontalAlignment="Left" Margin="38,316,0,0" VerticalAlignment="Top" Width="138" Height="47" Click="TopicBtn"/>
         <TextBox x:Name="SelectFileTB" HorizontalAlignment="Left" Height="53" Margin="38,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="136" />
         <Button x:Name="SelectFileBtn1" Content="Select File" HorizontalAlignment="Left" Margin="233,34,0,0" VerticalAlignment="Top" Width="123" Height="53" Click="SelectFileBtn1_Click"/>
         <Button x:Name="ReadFileBtn" Content="Read File " HorizontalAlignment="Left" Margin="68,119,0,0" VerticalAlignment="Top" Width="106" Height="44" Click="ReadFileBtn_Click"/>
+        <Button x:Name="createBtn" Content="Create your calendar!" HorizontalAlignment="Left" Margin="499,280,0,0" VerticalAlignment="Top" Width="132" Height="45" Click="CreateBtn_Click"/>
 
     </Grid>
 </Window>
