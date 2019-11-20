@@ -74,10 +74,21 @@ namespace GroupProjecto
 
         private void ReadFileBtn_Click(object sender, RoutedEventArgs e)
         {
+            List<string> TopicList = new List<string>();
+            List<string> DaysList = new List<string>();
+
             if (File.Exists(SelectFileTB.Text) == true)
             {// if file exists read all the lines
                 var lines = File.ReadAllLines(SelectFileTB.Text);
-        
+                for (int i = 1; i < lines.Length-1; i++)
+                {
+                    var line = lines[i];
+                    var column = line.Split(',');
+                    string topic = column[1];
+                    string days = column[2];
+                    TopicList.Add(topic);
+                    DaysList.Add(days);
+                }
             }
         }
     }
