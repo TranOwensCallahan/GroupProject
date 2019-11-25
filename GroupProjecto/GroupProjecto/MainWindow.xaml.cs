@@ -25,6 +25,7 @@ namespace GroupProjecto
     {
         List<string> TopicList = new List<string>();
         List<string> DaysList = new List<string>();
+        List<string> NotesList = new List<string>();
         public MainWindow()
         {
             InitializeComponent();
@@ -50,6 +51,7 @@ namespace GroupProjecto
 
             xlWorkSheet.Cells[1, 1] = "Topic";
             xlWorkSheet.Cells[1, 2] = "Days";
+            xlWorkSheet.Cells[1, 3] = "Notes";
 
 
 
@@ -87,8 +89,10 @@ namespace GroupProjecto
                     var column = line.Split(',');
                     string topic = column[0];
                     string days = column[1];
+                    string notes = column[2];
                     TopicList.Add(topic);
                     DaysList.Add(days);
+                    NotesList.Add(notes);
                 }
             }
         }
@@ -117,10 +121,14 @@ namespace GroupProjecto
             xlWorkSheet.Cells[1, 4] = "Topic";
             xlWorkSheet.Cells[1, 5] = "Notes";
 
-            int weeks = 17;
+            int weeks = 1;
             for (int i = 0; i < TopicList.Count; i++)
             {
+                xlWorkSheet.Cells[i + 2, 1] = weeks;
                 xlWorkSheet.Cells[i+2, 4] = TopicList[i];
+                xlWorkSheet.Cells[i + 2, 2] = DaysList[i];
+                xlWorkSheet.Cells[i + 2, 5] = NotesList[i];
+                weeks++;
             }
             
 
