@@ -52,6 +52,8 @@ namespace GroupProjecto
             xlWorkSheet.Cells[1, 1] = "Topic";
             xlWorkSheet.Cells[1, 2] = "Days";
             xlWorkSheet.Cells[1, 3] = "Notes";
+            xlWorkSheet.Cells[1, 3] = "Enter the first Date";
+
 
 
 
@@ -93,6 +95,7 @@ namespace GroupProjecto
                     TopicList.Add(topic);
                     DaysList.Add(days);
                     NotesList.Add(notes);
+                    DateTime classDate = Convert.ToDateTime(column[3]);
                 }
             }
         }
