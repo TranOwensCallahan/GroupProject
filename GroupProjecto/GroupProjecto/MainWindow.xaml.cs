@@ -23,6 +23,8 @@ namespace GroupProjecto
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<string> TopicList = new List<string>();
+        List<string> DaysList = new List<string>();
         public MainWindow()
         {
             InitializeComponent();
@@ -74,23 +76,66 @@ namespace GroupProjecto
 
         private void ReadFileBtn_Click(object sender, RoutedEventArgs e)
         {
-            List<string> TopicList = new List<string>();
-            List<string> DaysList = new List<string>();
+         
 
             if (File.Exists(SelectFileTB.Text) == true)
             {// if file exists read all the lines
                 var lines = File.ReadAllLines(SelectFileTB.Text);
-                for (int i = 1; i < lines.Length-1; i++)
+                for (int i = 1; i < lines.Length; i++)
                 {
                     var line = lines[i];
                     var column = line.Split(',');
-                    string topic = column[1];
-                    string days = column[2];
+                    string topic = column[0];
+                    string days = column[1];
                     TopicList.Add(topic);
                     DaysList.Add(days);
                 }
             }
         }
+
+        private void CreateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Excel.Application userExcel = new Microsoft.Office.Interop.Excel.Application();
+
+            if (userExcel == null)
+            {
+                MessageBox.Show("Excel is not properly installed!!");
+                return;
+            }
+
+
+            Excel.Workbook xlWorkBook;
+            Excel.Worksheet xlWorkSheet;
+            object misValue = System.Reflection.Missing.Value;
+
+            xlWorkBook = userExcel.Workbooks.Add(misValue);
+            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+
+            xlWorkSheet.Cells[1, 1] = "Week";
+            xlWorkSheet.Cells[1, 2] = "Day";
+            xlWorkSheet.Cells[1, 3] = "Date";
+            xlWorkSheet.Cells[1, 4] = "Topic";
+            xlWorkSheet.Cells[1, 5] = "Notes";
+
+            int weeks = 17;
+            for (int i = 0; i < TopicList.Count; i++)
+            {
+                xlWorkSheet.Cells[i+2, 4] = TopicList[i];
+            }
+            
+
+            xlWorkBook.SaveAs("d:\\generatedExcel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.Close(true, misValue, misValue);
+            userExcel.Quit();
+
+            Marshal.ReleaseComObject(xlWorkSheet);
+            Marshal.ReleaseComObject(xlWorkBook);
+            Marshal.ReleaseComObject(userExcel);
+
+            MessageBox.Show("Excel file created , you can find the file d:\\generatedExcel.csv");
+        }
+
     }
 }
+
 
