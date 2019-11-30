@@ -7,16 +7,19 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="474">
     <Grid Margin="0,0,0,-3.5">
-        <Button x:Name="topicBtn" Content="1. Create Topic File" HorizontalAlignment="Left" Margin="28,26,0,0" VerticalAlignment="Top" Width="403" Height="56" Click="TopicBtn"/>
-        <TextBox x:Name="SelectFileTB" HorizontalAlignment="Left" Height="59" Margin="260,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="171" />
-        <Button x:Name="SelectFileBtn1" Content="2. Select Input File" HorizontalAlignment="Left" Margin="28,103,0,0" VerticalAlignment="Top" Width="204" Height="59" Click="SelectFileBtn1_Click"/>
-        <Button x:Name="ReadFileBtn" Content="3. Read File " HorizontalAlignment="Left" Margin="28,186,0,0" VerticalAlignment="Top" Width="403" Height="54" Click="ReadFileBtn_Click"/>
-        <Button x:Name="createBtn" Content="6. Create Calendar" HorizontalAlignment="Left" Margin="28,364,0,0" VerticalAlignment="Top" Width="403" Height="52" Click="CreateBtn_Click"/>
-        <DatePicker x:Name="FirstMonday" HorizontalAlignment="Left" Margin="169,318,0,0" VerticalAlignment="Top" Width="262" Text="Select First Monday"/>
-        <Label Content="5. First Monday of Class:" HorizontalAlignment="Left" Margin="28,317,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,0.5" Height="42" Width="136"/>
-        <ListBox x:Name="readFileStatus" HorizontalAlignment="Left" Height="20" Margin="28,245,0,0" VerticalAlignment="Top" Width="403" BorderThickness="0"/>
-        <Button x:Name="enterHolidayBtn" Content="4. Please enter the holidays, one day at a time:" HorizontalAlignment="Left" Margin="10,279,0,0" VerticalAlignment="Top" Width="258" Click="EnterHolidayBtn_Click"/>
-        <TextBox x:Name="holidayTextBox" HorizontalAlignment="Left" Height="23" Margin="273,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="69*"/>
+            <ColumnDefinition Width="166*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="topicBtn" Content="1. Create Topic File" HorizontalAlignment="Left" Margin="28,26,0,0" VerticalAlignment="Top" Width="403" Height="56" Click="TopicBtn" Grid.ColumnSpan="3"/>
+        <TextBox x:Name="SelectFileTB" HorizontalAlignment="Left" Height="59" Margin="122.5,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="171" Grid.Column="2" />
+        <Button x:Name="SelectFileBtn1" Content="2. Select Input File" HorizontalAlignment="Left" Margin="28,103,0,0" VerticalAlignment="Top" Width="204" Height="59" Click="SelectFileBtn1_Click" Grid.ColumnSpan="3"/>
+        <Button x:Name="ReadFileBtn" Content="3. Read File " HorizontalAlignment="Left" Margin="28,186,0,0" VerticalAlignment="Top" Width="403" Height="54" Click="ReadFileBtn_Click" Grid.ColumnSpan="3"/>
+        <Button x:Name="createBtn" Content="5. Create Calendar" HorizontalAlignment="Left" Margin="28,317,0,0" VerticalAlignment="Top" Width="403" Height="52" Click="CreateBtn_Click" Grid.ColumnSpan="3"/>
+        <DatePicker x:Name="FirstMonday" HorizontalAlignment="Left" Margin="31.5,270,0,0" VerticalAlignment="Top" Width="262" Text="Select First Monday" Grid.Column="2"/>
+        <Label Content="4. First Monday of Class:" HorizontalAlignment="Left" Margin="28,270,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,0.5" Height="42" Width="136" Grid.ColumnSpan="3"/>
+        <ListBox x:Name="readFileStatus" HorizontalAlignment="Left" Height="20" Margin="28,245,0,0" VerticalAlignment="Top" Width="403" BorderThickness="0" Grid.ColumnSpan="3"/>
 
     </Grid>
 </Window>

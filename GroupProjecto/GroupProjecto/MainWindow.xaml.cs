@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Runtime.InteropServices;
+using ExcelDataReader;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
+
 
 namespace GroupProjecto
 {
@@ -26,6 +29,7 @@ namespace GroupProjecto
         List<DateTime> listOfHolidays = new List<DateTime>();
         DateTime holidayDate = new DateTime();
         List<Topic> TopicList = new List<Topic>();
+        List<Holiday> HolidayList = new List<Holiday>();
         string docFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public MainWindow()
@@ -44,22 +48,33 @@ namespace GroupProjecto
             }
 
 
+            
             Excel.Workbook xlWorkBook;
-            Excel.Worksheet xlWorkSheet;
+            Excel.Worksheet xlWorkSheet, holidayWorkSheet;
             object misValue = System.Reflection.Missing.Value;
 
             xlWorkBook = xlApp.Workbooks.Add(misValue);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+            holidayWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+            holidayWorkSheet.Name = "Holidays";
+
+            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.Add();
+            xlWorkSheet.Name = "Topics";
 
             xlWorkSheet.Cells[1, 1] = "Topic";
-            xlWorkSheet.Cells[1, 2] = "# Topic Days";
+            xlWorkSheet.Columns[1].ColumnWidth = 18;
+            xlWorkSheet.Cells[1, 2] = "# Days";
+            xlWorkSheet.Columns[2].ColumnWidth = 6;
             xlWorkSheet.Cells[1, 3] = "Notes";
+            xlWorkSheet.Columns[3].ColumnWidth = 48;
+
+            holidayWorkSheet.Cells[1, 1] = "Holiday Date";
+            holidayWorkSheet.Columns[1].ColumnWidth = 12;
+            holidayWorkSheet.Cells[1, 2] = "Holiday Description";
+            holidayWorkSheet.Columns[2].ColumnWidth = 48;
 
 
 
-
-            
-            xlWorkBook.SaveAs($"{docFolderPath}\\csharp", Excel.XlFileFormat.xlCSV, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs($"{docFolderPath}\\Topics", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             xlApp.Quit();
 
@@ -67,7 +82,7 @@ namespace GroupProjecto
             Marshal.ReleaseComObject(xlWorkBook);
             Marshal.ReleaseComObject(xlApp);
 
-            MessageBox.Show($"Excel file created , you can find the file {docFolderPath}\\csharp");
+            MessageBox.Show($"Excel file created, you can find the file at {docFolderPath}\\Topics.xls.\n\nPlease fill out both the Topics and Holidays worksheets in that excel file before continuing.");
         }
 
         private void SelectFileBtn1_Click(object sender, RoutedEventArgs e)
@@ -85,15 +100,38 @@ namespace GroupProjecto
 
             if (File.Exists(SelectFileTB.Text) == true)
             {// if file exists read all the lines
-                var lines = File.ReadAllLines(SelectFileTB.Text);
-                for (int i = 1; i < lines.Length; i++)
+                FileStream fs = File.Open(SelectFileTB.Text, FileMode.Open, FileAccess.Read);
+                IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(fs);
+                var result = reader.AsDataSet(new ExcelDataSetConfiguration()
                 {
-                    var line = lines[i];
-                    var column = line.Split(',');
-                    Topic topic = new Topic(column[0], Convert.ToInt32(column[1]), column[2]);
-                    TopicList.Add(topic); 
+                    ConfigureDataTable = (_) => new ExcelDataTableConfiguration()
+                    {
+                        UseHeaderRow = true
+                    }
+                });
+
+                var topicTable = result.Tables[0];
+                var holidayTable = result.Tables[1];
+
+                for (var i = 0; i < topicTable.Rows.Count; i++)
+                {
+                    Topic topic = new Topic(topicTable.Rows[i][0].ToString(), Convert.ToInt32(topicTable.Rows[i][1]), topicTable.Rows[i][2].ToString());
+                    TopicList.Add(topic);
                 }
+
+                for (int i = 0; i < holidayTable.Rows.Count; i++)
+                {
+                    Holiday holiday = new Holiday(Convert.ToDateTime(holidayTable.Rows[i][0]), Convert.ToString(holidayTable.Rows[i][1]));
+                    HolidayList.Add(holiday);
+                }
+
+
+
+
+
+                reader.Close();
                 readFileStatus.Items.Add("File Read Successfully.");
+
             }
         }
 
@@ -118,75 +156,78 @@ namespace GroupProjecto
             xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
 
             xlWorkSheet.Cells[1, 1] = "Week";
+            xlWorkSheet.Columns[1].ColumnWidth = 6;
             xlWorkSheet.Cells[1, 2] = "Day";
+            xlWorkSheet.Columns[2].ColumnWidth = 10;
             xlWorkSheet.Cells[1, 3] = "Date";
+            xlWorkSheet.Columns[3].ColumnWidth = 16;
             xlWorkSheet.Cells[1, 4] = "Topic";
+            xlWorkSheet.Columns[4].ColumnWidth = 18;
             xlWorkSheet.Cells[1, 5] = "Notes";
+            xlWorkSheet.Columns[5].ColumnWidth = 48;
 
-            int weeks = 1;
             int calendarMWProcessed = 0;
             foreach (var topic in TopicList)
             {
                 for (int i = 0; i < topic.Days; i++)
                 {
-                    var isHoliday = false; // figure out how to determine true; IIIIII  Not sure if we need this tbh IIII
-                    while (isHoliday)
+                    Holiday holiday = null;
+                    foreach (var item in HolidayList)
+                    {
+                        if(getCurrentDate(firstMonday, calendarMWProcessed) == item.HolidayDate)
+                        {
+                            holiday = item;
+                        }
+                    }
+                    while (holiday != null)
                     {
                         if (calendarMWProcessed % 2 == 0) // Mondays
                         {
                             xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 2) / 2;
                             xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Monday";
-                            xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 2) / 2) - 1));
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = getCurrentDate(firstMonday, calendarMWProcessed);
                         }
                         else // Wednesdays
                         {
                             xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 1) / 2;
                             xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Wednesday";
-                            xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1) + 2); ;
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = getCurrentDate(firstMonday, calendarMWProcessed);
                         }
-                        
-                       
+
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = holiday.HolidayDescription;
 
                         calendarMWProcessed++;
-                        isHoliday = false; // figure out how to determine true
+                        holiday = null;
+                        foreach (var item in HolidayList)
+                        {
+                            if (getCurrentDate(firstMonday, calendarMWProcessed) == item.HolidayDate)
+                            {
+                                holiday = item;
+                            }
+                        }
+
                     }
                     if (calendarMWProcessed % 2 == 0) // Mondays
                     {
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 2) / 2;
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Monday";
-                        xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 2 )/ 2)-1));
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = getCurrentDate(firstMonday, calendarMWProcessed);
                     } else // Wednesdays
                     {
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 1) / 2;
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Wednesday";
-                        xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1)+2); ;
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = getCurrentDate(firstMonday, calendarMWProcessed);
                     }
-                    DateTime day1 = firstMonday.AddDays(7 * (((calendarMWProcessed + 2) / 2) - 1));
-                    DateTime day2 = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1) + 2);
-                    
-                    for (int a = 0; a < listOfHolidays.Count; a++) //test to see if the days added to the excel sheet are equal to the inputed holidays.
-                    {
-                        if (day1 == listOfHolidays[a] || day2 == listOfHolidays[a])
-                        {
-                            xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = "Holiday XXXX";
-                            xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = "No School";
-                        }
-                        else
-                        {
-
-                            xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = topic.Name;
-                            xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = topic.Notes;
-                        }
-
-                    }
-
+                   
+                    xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = topic.Name;
+                    xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = topic.Notes;
 
                     calendarMWProcessed++;
                 }
             }
             
 
-            xlWorkBook.SaveAs($"{docFolderPath}\\csharpgeneratedExcel.xls", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs($"{docFolderPath}\\TopicsGeneratedSchedule.xls", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             userExcel.Quit();
 
@@ -194,24 +235,20 @@ namespace GroupProjecto
             Marshal.ReleaseComObject(xlWorkBook);
             Marshal.ReleaseComObject(userExcel);
 
-            MessageBox.Show($"Excel file created , you can find the file {docFolderPath}\\generatedExcel.csv");
+            MessageBox.Show($"Excel file created , you can find the file {docFolderPath}\\TopicsGeneratedSchedule.csv");
             //Jenna sucks
         }
 
-        private void EnterHolidayBtn_Click(object sender, RoutedEventArgs e)
+        public DateTime getCurrentDate(DateTime firstMonday, int mwprocessed)
         {
-            
-            
-            if (!DateTime.TryParse(holidayTextBox.Text, out holidayDate))
+            if (mwprocessed % 2 == 0) // Mondays
             {
-                MessageBox.Show("You must enter an actual date, please enter again");
+                return firstMonday.AddDays(7 * (((mwprocessed + 2) / 2) - 1));
             }
-            else
+            else // Wednesdays
             {
-
-                listOfHolidays.Add(Convert.ToDateTime(holidayDate));
+                return firstMonday.AddDays(7 * (((mwprocessed + 1) / 2) - 1) + 2);
             }
-            
         }
     }
 }
