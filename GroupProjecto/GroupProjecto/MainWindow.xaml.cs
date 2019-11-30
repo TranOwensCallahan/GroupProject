@@ -127,6 +127,28 @@ namespace GroupProjecto
             {
                 for (int i = 0; i < topic.Days; i++)
                 {
+                    var isHoliday = false; // figure out how to determine true;
+                    while (isHoliday)
+                    {
+                        if (calendarMWProcessed % 2 == 0) // Mondays
+                        {
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 2) / 2;
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Monday";
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 2) / 2) - 1));
+                        }
+                        else // Wednesdays
+                        {
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 1) / 2;
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Wednesday";
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1) + 2); ;
+                        }
+
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = "Holiday XXXX";
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = "No School";
+
+                        calendarMWProcessed++;
+                        isHoliday = false; // figure out how to determine true
+                    }
                     if (calendarMWProcessed % 2 == 0) // Mondays
                     {
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 2) / 2;
