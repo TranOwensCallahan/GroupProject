@@ -147,7 +147,7 @@ namespace GroupProjecto
             }
             
 
-            xlWorkBook.SaveAs($"{docFolderPath}\\csharpgeneratedExcel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs($"{docFolderPath}\\csharpgeneratedExcel.xls", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             userExcel.Quit();
 
