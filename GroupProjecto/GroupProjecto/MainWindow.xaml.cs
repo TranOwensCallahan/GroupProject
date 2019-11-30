@@ -29,6 +29,8 @@ namespace GroupProjecto
         List<string> TopicList = new List<string>();
         List<string> DaysList = new List<string>();
         List<string> NotesList = new List<string>();
+        string docFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -60,8 +62,8 @@ namespace GroupProjecto
 
 
 
-
-            xlWorkBook.SaveAs("C:\\Users\\mr2tu\\OneDrive\\Desktop\\csharp", Excel.XlFileFormat.xlCSV, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            
+            xlWorkBook.SaveAs($"{docFolderPath}\\csharp", Excel.XlFileFormat.xlCSV, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             xlApp.Quit();
 
@@ -69,7 +71,7 @@ namespace GroupProjecto
             Marshal.ReleaseComObject(xlWorkBook);
             Marshal.ReleaseComObject(xlApp);
 
-            MessageBox.Show("Excel file created , you can find the file C:\\Users\\mr2tu\\OneDrive\\Desktop\\csharp");
+            MessageBox.Show($"Excel file created , you can find the file {docFolderPath}\\csharp");
         }
 
         private void SelectFileBtn1_Click(object sender, RoutedEventArgs e)
@@ -95,7 +97,7 @@ namespace GroupProjecto
                     string topic = column[0];
                     DateTime holidayDate = Convert.ToDateTime(column[3]);
                     string notes = column[1];
-                    classDate = Convert.ToDateTime(column[2]);
+                    DateTime classDate = Convert.ToDateTime(column[2]);
                     TopicList.Add(topic);
                     holidayDatesList.Add(holidayDate);
                     NotesList.Add(notes);
@@ -151,7 +153,7 @@ namespace GroupProjecto
             }
             
 
-            xlWorkBook.SaveAs("C:\\Users\\mr2tu\\OneDrive\\Desktop\\csharpgeneratedExcel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs($"{docFolderPath}\\csharpgeneratedExcel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             userExcel.Quit();
 
@@ -159,7 +161,7 @@ namespace GroupProjecto
             Marshal.ReleaseComObject(xlWorkBook);
             Marshal.ReleaseComObject(userExcel);
 
-            MessageBox.Show("Excel file created , you can find the file d:\\generatedExcel.csv");
+            MessageBox.Show($"Excel file created , you can find the file {docFolderPath}\\generatedExcel.csv");
             //Jenna sucks
         }
 
