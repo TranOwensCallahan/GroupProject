@@ -23,12 +23,7 @@ namespace GroupProjecto
     /// </summary>
     public partial class MainWindow : Window
     {
-        DateTime classDate = new DateTime();
-        List<DateTime> schoolDaysList = new List<DateTime>();
-        List<DateTime> holidayDatesList = new List<DateTime>();
-        List<string> TopicList = new List<string>();
-        List<string> DaysList = new List<string>();
-        List<string> NotesList = new List<string>();
+        List<Topic> TopicList = new List<Topic>();
         string docFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public MainWindow()
@@ -55,9 +50,8 @@ namespace GroupProjecto
             xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
 
             xlWorkSheet.Cells[1, 1] = "Topic";
-            xlWorkSheet.Cells[1, 4] = "Enter the holidays";
-            xlWorkSheet.Cells[1, 2] = "Notes";
-            xlWorkSheet.Cells[1, 3] = "Enter the first Date";
+            xlWorkSheet.Cells[1, 2] = "# Topic Days";
+            xlWorkSheet.Cells[1, 3] = "Notes";
 
 
 
@@ -94,17 +88,10 @@ namespace GroupProjecto
                 {
                     var line = lines[i];
                     var column = line.Split(',');
-                    string topic = column[0];
-                    DateTime holidayDate = Convert.ToDateTime(column[3]);
-                    string notes = column[1];
-                    DateTime classDate = Convert.ToDateTime(column[2]);
-                    TopicList.Add(topic);
-                    holidayDatesList.Add(holidayDate);
-                    NotesList.Add(notes);
-                    
-                    
-                    
+                    Topic topic = new Topic(column[0], Convert.ToInt32(column[1]), column[2]);
+                    TopicList.Add(topic); 
                 }
+                readFileStatus.Items.Add("File Read Successfully.");
             }
         }
 
@@ -112,13 +99,7 @@ namespace GroupProjecto
         {
             
             Excel.Application userExcel = new Microsoft.Office.Interop.Excel.Application();
-            for (int i = 0; i < TopicList.Count; i++)
-            {
-                schoolDaysList.Add(classDate);
-                schoolDaysList.Add(classDate.AddDays(2));
-                classDate = classDate.AddDays(7);
-              
-            }
+            var firstMonday = FirstMonday.SelectedDate.Value.Date;
 
             if (userExcel == null)
             {
@@ -141,15 +122,28 @@ namespace GroupProjecto
             xlWorkSheet.Cells[1, 5] = "Notes";
 
             int weeks = 1;
-            for (int i = 0; i < TopicList.Count; i++)
+            int calendarMWProcessed = 0;
+            foreach (var topic in TopicList)
             {
-                int a = 1;
-                xlWorkSheet.Cells[i + 2, 1 + a] = weeks;
-                xlWorkSheet.Cells[i+2, 4] = TopicList[i];
-                xlWorkSheet.Cells[i + 2, 2] = schoolDaysList[i];
-                xlWorkSheet.Cells[i + 2, 5] = NotesList[i];
-                weeks++;
-                a++;
+                for (int i = 0; i < topic.Days; i++)
+                {
+                    if (calendarMWProcessed % 2 == 0) // Mondays
+                    {
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 2) / 2;
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Monday";
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 2 )/ 2)-1));
+                    } else // Wednesdays
+                    {
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 1] = (calendarMWProcessed + 1) / 2;
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Wednesday";
+                        xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1)+2); ;
+                    }
+
+                    xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = topic.Name;
+                    xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = topic.Notes;
+
+                    calendarMWProcessed++;
+                }
             }
             
 
