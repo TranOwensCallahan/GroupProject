@@ -23,6 +23,8 @@ namespace GroupProjecto
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<DateTime> listOfHolidays = new List<DateTime>();
+        DateTime holidayDate = new DateTime();
         List<Topic> TopicList = new List<Topic>();
         string docFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
@@ -127,7 +129,7 @@ namespace GroupProjecto
             {
                 for (int i = 0; i < topic.Days; i++)
                 {
-                    var isHoliday = false; // figure out how to determine true;
+                    var isHoliday = false; // figure out how to determine true; IIIIII  Not sure if we need this tbh IIII
                     while (isHoliday)
                     {
                         if (calendarMWProcessed % 2 == 0) // Mondays
@@ -142,9 +144,8 @@ namespace GroupProjecto
                             xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Wednesday";
                             xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1) + 2); ;
                         }
-
-                        xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = "Holiday XXXX";
-                        xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = "No School";
+                        
+                       
 
                         calendarMWProcessed++;
                         isHoliday = false; // figure out how to determine true
@@ -160,9 +161,25 @@ namespace GroupProjecto
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 2] = "Wednesday";
                         xlWorkSheet.Cells[calendarMWProcessed + 2, 3] = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1)+2); ;
                     }
+                    DateTime day1 = firstMonday.AddDays(7 * (((calendarMWProcessed + 2) / 2) - 1));
+                    DateTime day2 = firstMonday.AddDays(7 * (((calendarMWProcessed + 1) / 2) - 1) + 2);
+                    
+                    for (int a = 0; a < listOfHolidays.Count; a++) //test to see if the days added to the excel sheet are equal to the inputed holidays.
+                    {
+                        if (day1 == listOfHolidays[a] || day2 == listOfHolidays[a])
+                        {
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = "Holiday XXXX";
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = "No School";
+                        }
+                        else
+                        {
 
-                    xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = topic.Name;
-                    xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = topic.Notes;
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 4] = topic.Name;
+                            xlWorkSheet.Cells[calendarMWProcessed + 2, 5] = topic.Notes;
+                        }
+
+                    }
+
 
                     calendarMWProcessed++;
                 }
@@ -181,6 +198,21 @@ namespace GroupProjecto
             //Jenna sucks
         }
 
+        private void EnterHolidayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            
+            
+            if (!DateTime.TryParse(holidayTextBox.Text, out holidayDate))
+            {
+                MessageBox.Show("You must enter an actual date, please enter again");
+            }
+            else
+            {
+
+                listOfHolidays.Add(Convert.ToDateTime(holidayDate));
+            }
+            
+        }
     }
 }
 
