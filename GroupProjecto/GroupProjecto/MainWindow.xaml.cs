@@ -23,6 +23,9 @@ namespace GroupProjecto
     /// </summary>
     public partial class MainWindow : Window
     {
+        DateTime classDate = new DateTime();
+        List<DateTime> schoolDaysList = new List<DateTime>();
+        List<DateTime> holidayDatesList = new List<DateTime>();
         List<string> TopicList = new List<string>();
         List<string> DaysList = new List<string>();
         List<string> NotesList = new List<string>();
@@ -50,15 +53,15 @@ namespace GroupProjecto
             xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
 
             xlWorkSheet.Cells[1, 1] = "Topic";
-            xlWorkSheet.Cells[1, 2] = "Days";
-            xlWorkSheet.Cells[1, 3] = "Notes";
+            xlWorkSheet.Cells[1, 4] = "Enter the holidays";
+            xlWorkSheet.Cells[1, 2] = "Notes";
             xlWorkSheet.Cells[1, 3] = "Enter the first Date";
 
 
 
 
 
-            xlWorkBook.SaveAs("C:\\Users\\jenna\\OneDrive\\csharp", Excel.XlFileFormat.xlCSV, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs("C:\\Users\\mr2tu\\OneDrive\\Desktop\\csharp", Excel.XlFileFormat.xlCSV, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             xlApp.Quit();
 
@@ -66,7 +69,7 @@ namespace GroupProjecto
             Marshal.ReleaseComObject(xlWorkBook);
             Marshal.ReleaseComObject(xlApp);
 
-            MessageBox.Show("Excel file created , you can find the file d:\\csharp-Excel.csv");
+            MessageBox.Show("Excel file created , you can find the file C:\\Users\\mr2tu\\OneDrive\\Desktop\\csharp");
         }
 
         private void SelectFileBtn1_Click(object sender, RoutedEventArgs e)
@@ -90,19 +93,30 @@ namespace GroupProjecto
                     var line = lines[i];
                     var column = line.Split(',');
                     string topic = column[0];
-                    string days = column[1];
-                    string notes = column[2];
+                    DateTime holidayDate = Convert.ToDateTime(column[3]);
+                    string notes = column[1];
+                    classDate = Convert.ToDateTime(column[2]);
                     TopicList.Add(topic);
-                    DaysList.Add(days);
+                    holidayDatesList.Add(holidayDate);
                     NotesList.Add(notes);
-                    DateTime classDate = Convert.ToDateTime(column[3]);
+                    
+                    
+                    
                 }
             }
         }
 
         private void CreateBtn_Click(object sender, RoutedEventArgs e)
         {
+            
             Excel.Application userExcel = new Microsoft.Office.Interop.Excel.Application();
+            for (int i = 0; i < TopicList.Count; i++)
+            {
+                schoolDaysList.Add(classDate);
+                schoolDaysList.Add(classDate.AddDays(2));
+                classDate = classDate.AddDays(7);
+              
+            }
 
             if (userExcel == null)
             {
@@ -127,15 +141,17 @@ namespace GroupProjecto
             int weeks = 1;
             for (int i = 0; i < TopicList.Count; i++)
             {
-                xlWorkSheet.Cells[i + 2, 1] = weeks;
+                int a = 1;
+                xlWorkSheet.Cells[i + 2, 1 + a] = weeks;
                 xlWorkSheet.Cells[i+2, 4] = TopicList[i];
-                xlWorkSheet.Cells[i + 2, 2] = DaysList[i];
+                xlWorkSheet.Cells[i + 2, 2] = schoolDaysList[i];
                 xlWorkSheet.Cells[i + 2, 5] = NotesList[i];
                 weeks++;
+                a++;
             }
             
 
-            xlWorkBook.SaveAs("C:\\Users\\jenna\\OneDrive\\csharpgeneratedExcel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            xlWorkBook.SaveAs("C:\\Users\\mr2tu\\OneDrive\\Desktop\\csharpgeneratedExcel.csv", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
             xlWorkBook.Close(true, misValue, misValue);
             userExcel.Quit();
 
